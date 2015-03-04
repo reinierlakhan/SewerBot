@@ -1,0 +1,39 @@
+﻿<Window x:Class="SewerBot.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="SewerBot" Height="320" Width="400"
+        ContentRendered="Window_ContentRendered">
+    <Grid>
+        <Grid.Background>
+            <RadialGradientBrush>
+                <GradientStop Color="#FF000FC6" Offset="0"/>
+                <GradientStop Color="#FF000A83" Offset="1"/>
+            </RadialGradientBrush>
+        </Grid.Background>
+        <Label Content="SewerBot Control" HorizontalAlignment="Left" VerticalAlignment="Top" Width="395" Foreground="White" FontSize="18" FontFamily="Segoe WP Semibold"/>
+        <ListBox x:Name="DeviceList" Margin="40,40,40,70" SelectionChanged="DeviceList_SelectionChanged">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <UniformGrid>
+                        <TextBlock Text="{Binding Path=Hostname}"/>
+                        <TextBlock Text="{Binding Path=Address}" HorizontalAlignment="Right" />
+                    </UniformGrid>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+        <TextBlock Margin="40,40,40,70.5" FontSize="24" Text="No Devices Detected" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="Segoe UI Light" >
+            <TextBlock.Style>
+                <Style TargetType="{x:Type TextBlock}">
+                    <Setter Property="Visibility" Value="Collapsed" />
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding ElementName=DeviceList, Path=Items.Count}" Value="0">
+                            <Setter Property="Visibility" Value="Visible" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </TextBlock.Style>
+        </TextBlock>
+        <Button Name="RefreshButton" Content="Refresh" HorizontalAlignment="Left" Margin="40,0,0,20" VerticalAlignment="Bottom" Width="150" Height="30" FontSize="18" Background="#FFFB6C0A" BorderBrush="#FFFFB988" Foreground="White" Click="Refresh_Click"/>
+        <Button Name="ConnectButton" Content="Connect" Margin="0,0,40,20" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="150" Height="30" FontFamily="Segoe UI Semibold" FontSize="18" Background="#FF2BC826" BorderBrush="#FF88FF84" Foreground="White" IsEnabled="False" Click="Connect_Click"/>
+    </Grid>
+</Window>

@@ -1,0 +1,8 @@
+﻿<Window x:Class="SewerBot.ControlCenter"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="ControlCenter" Height="950" Width="1585">
+    <Grid>
+        <MediaElement Name="CameraView" HorizontalAlignment="Left" Height="720" VerticalAlignment="Top" Width="1280"/>
+    </Grid>
+</Window>
