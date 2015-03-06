@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Bonjour;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -27,18 +28,18 @@ namespace SewerBot
         public MainWindow()
         {
             InitializeComponent();
-            //Connect("192.168.2.2", "Boop1\n");
+
         }
         private void Window_ContentRendered(object sender, EventArgs e)
         {
-            FindBots("sewerbot");
+            FindBots("sewerbot.local");
         }
         private void FindBots(string pattern)
         {
             string strHostName;
 
-            strHostName = Dns.GetHostName();
-
+            //strHostName = Dns.GetHostName();
+            strHostName = pattern;
             IPHostEntry ipEntry = Dns.GetHostEntry(strHostName);
             IPAddress[] addr = ipEntry.AddressList;
 
@@ -47,7 +48,7 @@ namespace SewerBot
             int i = 0;
             while (i < addr.Length)
             {
-                strHostName = Dns.GetHostEntry((addr[i])).HostName;
+                //strHostName = Dns.GetHostEntry((addr[i])).HostName;
 
                 Match match = Regex.Match(strHostName, pattern);
                 if (match.Success)
@@ -70,6 +71,7 @@ namespace SewerBot
                 
                 TcpClient client = new TcpClient(server, port);
 
+                message = message + "\n";
                 // Translate the passed message into ASCII and store it as a Byte array.
                 Byte[] data = System.Text.Encoding.ASCII.GetBytes(message);
 
@@ -86,7 +88,7 @@ namespace SewerBot
                 // Receive the TcpServer.response. 
 
                 // Buffer to store the response bytes.
-                data = new Byte[256];
+                data = new Byte[512];
 
                 // String to store the response ASCII representation.
                 String responseData = String.Empty;
@@ -97,8 +99,7 @@ namespace SewerBot
                 Console.WriteLine("Received: {0}", responseData);
 
 
-                // Close everything.
-                stream.Close();
+                
                 if (responseData.Equals(ack))
                     return client;
             }
@@ -111,25 +112,34 @@ namespace SewerBot
                 Console.WriteLine("SocketException: {0}", e);
             }
 
-            Console.WriteLine("\n Press Enter to continue...");
-            Console.Read();
+            
             return null;
         }
 
         private void Refresh_Click(object sender, RoutedEventArgs e)
         {
-            FindBots("sewerbot");
+            FindBots("sewerbot.local");
         }
 
         private void Connect_Click(object sender, RoutedEventArgs e)
         {
-            var device = DeviceList.SelectedItem;
-            System.Type type = device.GetType();
-            string host = (string)type.GetProperty("Hostname").GetValue(device, null);
-            string address = (string)type.GetProperty("Address").GetValue(device, null);
+            string address = null;
+
+            if (ConnectButton.Tag as string == "List")
+            {
+                var device = DeviceList.SelectedItem;
+                System.Type type = device.GetType();
+                address = (string)type.GetProperty("Address").GetValue(device, null);
+            }
+            else if (ConnectButton.Tag as string == "Manual")
+            {
+                address = IP.Text;
+            }
+            
+
             Console.WriteLine(address);
             
-            TcpClient client = Connect(address, 9999, "CONN_REQ", "SB_READY");
+            TcpClient client = Connect(address, 1234, "CONN_REQ", "SB_READY");
             if (client != null)
             {
                 ControlCenter control = new ControlCenter(client);
@@ -145,8 +155,60 @@ namespace SewerBot
         private void DeviceList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             ConnectButton.IsEnabled = true;
+            ConnectButton.Tag = "List";
+        }
+
+        private void IP_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            string input = IP.Text;
+
+            IPAddress address;
+            if (IPAddress.TryParse(input, out address))
+            {
+                IP.Background = Brushes.LightGreen;
+                ConnectButton.IsEnabled = true;
+                ConnectButton.Tag = "Manual";
+            }
+            else
+            {
+                IP.Background = Brushes.White;
+                ConnectButton.IsEnabled = false;
+            }
+        }
+
+        private void DeviceList_LostFocus(object sender, RoutedEventArgs e)
+        {
+            //ConnectButton.IsEnabled = false;
+        }
+
+        private void DeviceList_GotFocus(object sender, RoutedEventArgs e)
+        {
+            if (DeviceList.SelectedItem != null)
+            {
+                ConnectButton.IsEnabled = true;
+                ConnectButton.Tag = "List";
+            }
+        }
+
+        private void IP_GotFocus(object sender, RoutedEventArgs e)
+        {
+            string input = IP.Text;
+
+            ConnectButton.IsEnabled = false;
+
+            IPAddress address;
+            if (IPAddress.TryParse(input, out address))
+            {
+                IP.Background = Brushes.LightGreen;
+                ConnectButton.IsEnabled = true;
+                ConnectButton.Tag = "Manual";
+            }
+            else
+            {
+                IP.Background = Brushes.White;
+                ConnectButton.IsEnabled = false;
+            }
         }
     }
-
 
 }

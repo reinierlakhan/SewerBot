@@ -22,11 +22,21 @@ namespace SewerBot
     public partial class ControlCenter : Window
     {
         public TcpClient client { get; set; }
+        public Uri stream { get; set; }
         public ControlCenter(TcpClient client)
         {
             InitializeComponent();
             this.client = client;
-            CameraView.Source = client.Client.RemoteEndPoint;
+            string uriString = "http://"+client.Client.RemoteEndPoint.ToString() + "5/";
+            Uri uri = new Uri(uriString);
+            this.stream = uri;
+            CameraView.Source = uri;
+            System.Threading.Thread.Sleep((int)System.TimeSpan.FromSeconds(5).TotalMilliseconds); //Find a better way to wait for stream.
+        }
+
+        private void CameraView_MediaFailed(object sender, ExceptionRoutedEventArgs e)
+        {
+            Console.WriteLine("stream failed");
         }
     }
 }

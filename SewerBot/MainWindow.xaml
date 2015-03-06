@@ -2,7 +2,7 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="SewerBot" Height="320" Width="400"
-        ContentRendered="Window_ContentRendered">
+        ContentRendered="Window_ContentRendered" ResizeMode="CanMinimize">
     <Grid>
         <Grid.Background>
             <RadialGradientBrush>
@@ -11,7 +11,7 @@
             </RadialGradientBrush>
         </Grid.Background>
         <Label Content="SewerBot Control" HorizontalAlignment="Left" VerticalAlignment="Top" Width="395" Foreground="White" FontSize="18" FontFamily="Segoe WP Semibold"/>
-        <ListBox x:Name="DeviceList" Margin="40,40,40,70" SelectionChanged="DeviceList_SelectionChanged">
+        <ListBox x:Name="DeviceList" Margin="40,40,40,100" SelectionChanged="DeviceList_SelectionChanged" LostFocus="DeviceList_LostFocus" GotFocus="DeviceList_GotFocus">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <UniformGrid>
@@ -21,7 +21,7 @@
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
-        <TextBlock Margin="40,40,40,70.5" FontSize="24" Text="No Devices Detected" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="Segoe UI Light" >
+        <TextBlock Margin="40,40,40,100" FontSize="24" Text="No Devices Detected" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="Segoe UI Light" >
             <TextBlock.Style>
                 <Style TargetType="{x:Type TextBlock}">
                     <Setter Property="Visibility" Value="Collapsed" />
@@ -35,5 +35,22 @@
         </TextBlock>
         <Button Name="RefreshButton" Content="Refresh" HorizontalAlignment="Left" Margin="40,0,0,20" VerticalAlignment="Bottom" Width="150" Height="30" FontSize="18" Background="#FFFB6C0A" BorderBrush="#FFFFB988" Foreground="White" Click="Refresh_Click"/>
         <Button Name="ConnectButton" Content="Connect" Margin="0,0,40,20" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="150" Height="30" FontFamily="Segoe UI Semibold" FontSize="18" Background="#FF2BC826" BorderBrush="#FF88FF84" Foreground="White" IsEnabled="False" Click="Connect_Click"/>
+        <TextBox x:Name="IP" HorizontalAlignment="Center" Height="24" Margin="39,203,40,64.5" TextWrapping="Wrap" VerticalAlignment="Center" Width="315" FontSize="16" TextOptions.TextFormattingMode="Display" TextChanged="IP_TextChanged" GotFocus="IP_GotFocus"/>
+        <TextBlock IsHitTestVisible="False" Text="Manually Enter IP Address" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="39,203,40,64.5" Foreground="DarkGray" Height="24" Width="315" FontSize="16" TextOptions.TextFormattingMode="Display" TextAlignment="Center">
+            <TextBlock.Style>
+                <Style TargetType="{x:Type TextBlock}">
+                    <Setter Property="Visibility" Value="Collapsed"/>
+                    <Style.Triggers>
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding Text, ElementName=IP}" Value="" />
+                                <Condition Binding="{Binding IsFocused, ElementName=IP}" Value="false" />
+                            </MultiDataTrigger.Conditions>
+                            <Setter Property="Visibility" Value="Visible"/>
+                        </MultiDataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </TextBlock.Style>
+        </TextBlock>
     </Grid>
 </Window>
