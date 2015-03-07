@@ -40,10 +40,19 @@ namespace SewerBot
 
             //strHostName = Dns.GetHostName();
             strHostName = pattern;
-            IPHostEntry ipEntry = Dns.GetHostEntry(strHostName);
-            IPAddress[] addr = ipEntry.AddressList;
-
+            IPHostEntry ipEntry;
             DeviceList.Items.Clear();
+            try
+            {
+                ipEntry = Dns.GetHostEntry(strHostName);
+            }
+            catch (Exception)
+            {
+
+                return;
+            }
+            
+            IPAddress[] addr = ipEntry.AddressList;
 
             int i = 0;
             while (i < addr.Length)
@@ -140,6 +149,7 @@ namespace SewerBot
             Console.WriteLine(address);
             
             TcpClient client = Connect(address, 1234, "CONN_REQ", "SB_READY");
+
             if (client != null)
             {
                 ControlCenter control = new ControlCenter(client);
